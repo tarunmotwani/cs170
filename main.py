@@ -1,4 +1,6 @@
-goal = [[1,2,3], [4,5,6], [7,8,0]]
+from heapq import heapify, heappop, heappush
+import heapq
+goal = [[1,2,3], [4,5,6], [7,8,0]] #ideal state
 
 class Node:
     #state, heuristic, depth, and cost
@@ -9,49 +11,66 @@ class Node:
         self.cost = heuristic + depth            #h(n) + g(n) calculation of total moves altogether
 
 def manhattanDistanceHeuristic(puzzle):
-    print('manhattan')
-    # for i in range(3):
-    #     for j in range(3):
-
-
+    result = 0
+    for i in range(3):
+        for j in range(3):                          #in i,j puzzle
+            if puzzle[i][j] != goal[i][j]:
+                for x in range(3):
+                    for y in range(3):              #check x,y goal
+                        if puzzle[i][j] == goal[x][y]:      #if match
+                            if puzzle[i][j] != 0:           #not zero empty tile
+                                result += abs(x-i)+abs(y-j) #sum absolute values of the difference
+    return result                                           #return result
+            
 def misplacedTileHeuristic(puzzle):
     count = 0
     for i in range(3):
         for j in range(3):
             if puzzle[i][j] != goal[i][j]:
-                count += 1
-    count -= 1
+                if puzzle[i][j] != 0:
+                   count += 1
     return count
 
 def search(puzzle, alg):
     if alg == '1':
         heuristic = 0
+        node = Node(puzzle, 0, 0, 0)
+        print(heuristic)
     if alg == '2':
         heuristic = misplacedTileHeuristic(puzzle)
+        node = Node(puzzle, heuristic, 0, heuristic)
         print(heuristic)
+    if alg == '3':
+        heuristic = manhattanDistanceHeuristic(puzzle)
+        node = Node(puzzle, heuristic, 0, heuristic)
+        print(heuristic)
+    
+    queue = []
+    heapq.heappush(queue, node)
+    # goalState = False
+    # while goalState == False:
+    #     heapify(queue)
+    #     if queue == heappop(listy):
+            
+    #     if not queue:
+    #         print('Empty, fail case')
+    #         break
+        
+
 # queueing function
 
 # empty function
+#goal state function
 
-# def misplacedHeuristic
-
-# def manhattanHeuristic
 def queue(puzzle, heuristic):
     print('queue')
 
-# def generalSearch(puzzle, alg):
-#     if alg == '1':  #uniform cost search
-#         heuristic = 0
-#         queue(puzzle, 0)
-    
-
-
-#uniform heuristic = 0
-#misplaced time = 
 
 
 if __name__ == '__main__':
-    puzzle = [[1,2,3], [4,8,0], [7,6,5]]
+    # puzzle = [[1,2,3], [4,8,0], [7,6,5]]
+    puzzle = [[3,2,8],[4,5,6],[0,1,7]]
+
     print ('Type “1” to use a default puzzle, or “2” to enter your own puzzle.')
     choice = input()
     if choice == '1': 
@@ -76,7 +95,8 @@ if __name__ == '__main__':
         search(puzzle, alg)
     if alg == '3':
         print('manhattan distance heuristic')
-        # search(puzzle, alg)
+        search(puzzle, alg)
+    
     
     # goal line text
     # if success == true
