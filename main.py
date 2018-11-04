@@ -1,5 +1,6 @@
 from heapq import heapify, heappop, heappush
 import heapq
+import copy
 goal = [[1,2,3], [4,5,6], [7,8,0]] #ideal state
 
 class Node:
@@ -9,44 +10,71 @@ class Node:
         self.heuristic = heuristic               #h(n)    heuristic is how far we're about to go to get to the goal state
         self.depth = depth                       #g(n) depth is how far we've traversed 
         self.cost = heuristic + depth            #h(n) + g(n) calculation of total moves altogether
-    def getState(self, state):
-        return self.state                        #function to return the current state of the node
-    def operators(self, state):                  
-        self.top = state
-        self.left = state
-        self.right = state
-        self.down = state
-        return []
+    def __lt__(self, other):
+        return self.heuristic < other.heuristic
+    
+    
+    # def getState(self, state):
+    #     return self.state                        #function to return the current state of the node
+    # def operators(self, state):                  
+    #     self.top = state
+    #     self.left = state
+    #     self.right = state
+    #     self.down = state
+    #     return []
 
 def expand(node):                              #passing in the current node value
     opArray = []
     #steps
     #1)find the blank space
+    
     i,j=findZero(node.state)
+    d = node.depth + 1
     #2)find the limitations by up, down left right operations based on the board
     
-    if i != 0: #up not given option to expand
-        node.up = node.state
-        opArray.append(node.up)
-    if i != 2:  #no down 
-        node.down = node.state
-        opArray.append(node.up)
+    # if i != 0:
+    #     top = copy.deepcopy(node.state)
+    #     top[i][j] = top[i-1][j]
+    #     top[i-1][j] = 0
+    #     opArray.append(top)
+ 
+ 
+ #incorrect code
+ #_______________________________________________________________________________
+    if i != 0: #row 0 not given option to expand
+        top = copy.deepcopy(node.state)
+        top[i][j] = top[i-1][j]
+        top[i-1][j] = 0
+        topNode = Node(top,0, d, d)
+        opArray.append(topNode)
+    if i != 2:  #no down for row 2 
+        down = copy.deepcopy(node.state)
+        down[i][j] = down[i+1][j]
+        down[i+1][j] = 0
+        downNode = Node(down,0, d, d)
+        opArray.append(downNode)
     if j != 0:  #no left 
-        node.left = node.state
-        opArray.append(node.up)
+        left = copy.deepcopy(node.state)
+        left[i][j] = left[i][j-1]
+        left[i][j-1] = 0
+        leftNode = Node(left,0, d, d)
+        opArray.append(leftNode)
     if j != 2: #no right
-        node.right = node.state
-        opArray.append(node.up)
-    print(opArray)
-
+        right = copy.deepcopy(node.state)
+        right[i][j] = right[i][j+1]
+        right[i][j+1] = 0
+        rightNode = Node(right,0, d, d)
+        opArray.append(rightNode)
+    # print(opArray)
+#____________________________________________________________________________________
     
 
     #3)copy over the variables based on cheapest heuristics
 
     
-
+    # print(opArray[1].state)
     print('here is expansion')
-    return []
+    return opArray
 def findZero(node):
     for i in range(3): 
         for j in range(3): 
@@ -70,14 +98,30 @@ def misplacedTileHeuristic(puzzle):
     return count
 def queueing(x, queue, alg):
     arr = [1,2,3]
+    print("container ", x)
     for i in range(len(x)):
-        if alg == arr[i]: 
+    #     if alg == arr[i]: 
+    #         x[i].heuristic = 0
+    #     elif alg == arr[i]: 
+    #         x[i].heuristic = misplacedTileHeuristic(x[i])
+    #     elif alg == arr[i]: 
+    #         x[i].heuristic = manhattanDistanceHeuristic(x[i])
+    #         print("manhattan heuristic test ", x[i])
+        
+        if alg == '1':
             x[i].heuristic = 0
-        elif alg == arr[i]: 
-            x[i].heuristic = misplacedTileHeuristic(x[i])
-        elif alg == arr[i]: 
-            x[i].heuristic = manhattanDistanceHeuristic(x[i])
-        heappush(queue, x[i])
+            print('ucf h=', x[i].heuristic)
+        if alg == '2':
+            x[i].heuristic = misplacedTileHeuristic(x[i].state)
+            print('mt h=', x[i].heuristic)
+        if alg == '3':
+            x[i].heuristic = manhattanDistanceHeuristic(x[i].state)
+            print('md h=', x[i].heuristic)
+        # print(x[i])
+        # print("before",queue)
+        heapq.heappush(queue, x[i])
+    # print("after ",queue)
+        
     print('queueing' )
 def display(x): 
     for i in range(3): print(x.state[i][0], x.state[i][1], x.state[i][2])
@@ -96,7 +140,14 @@ def goalCheck(node, goalState):
             return True
     else: return False
 
-def search(puzzle, alg):
+def search(puzzle, alg):    # for i in range(len(x)):
+    #     if alg == arr[i]: 
+    #         x[i].heuristic = 0
+    #     elif alg == arr[i]: 
+    #         x[i].heuristic = misplacedTileHeuristic(x[i])
+    #     elif alg == arr[i]: 
+    #         x[i].heuristic = manhattanDistanceHeuristic(x[i])
+    #         print("manhattan heuristic test ", x[i])
     if alg == '1':
         heuristic = 0                                       #heuristic is zero
         node = Node(puzzle, 0, 0, 0)
@@ -112,20 +163,23 @@ def search(puzzle, alg):
     
     queue = []                                              #empty queue of nodes
     heapq.heappush(queue, node)                             #using a heap priority queue to always know the first element
+    print("nodecheck ", queue)
+    # heapq.heappush(queue, node)                             #using a heap priority queue to always know the first element
+    # print("nodecheck 2", queue)
+
     goalState = False
     while goalState == False:                               #while loop for false
-        print('expanding state')
         display(node)
         emptyCheck(node)
         goalState = goalCheck(node, goalState)
+        heapify(queue)
         temp = heappop(queue)                                       #using a temp value to save the current state of the queue
         print('the best state to expand with a g(n) of ', node.depth, 'and a f(n) of ' , node.heuristic)   #printing the best solution
-        print('expanding node')
+        print('expanding state')
         x = expand(temp)                                     #passing in the current node 
-        # queueing(x, queue,alg)
+        queueing(x, queue,alg)
         
-        # print(x.state)
-        goalState = True
+
 
 # queueing function
 
@@ -136,8 +190,8 @@ def cases():
     # puzzle = [[1,2,3], [4,5,6], [7,8,0]] #trivial solution
     # puzzle = [[1,2,3], [4,5,6], [7,0,8]] #veryEasy solution
     # puzzle = [[1,2,0], [4,5,3], [7,8,6]] #easy solution
-    # puzzle = [[0,1,2], [4,5,3], [7,8,6]] #doable solution
-    puzzle = [[8,7,1], [6,0,2], [8,7,1]] #ohboy solution
+    puzzle = [[0,1,2], [4,5,3], [7,8,6]] #doable solution
+    # puzzle = [[8,7,1], [6,0,2], [8,7,1]] #ohboy solution
     # puzzle = [[1,2,3], [4,5,6], [8,7,0]] #impossible solution
     # puzzle = [[3,2,8],[4,5,6],[0,1,7]] #custom solution
     return puzzle
