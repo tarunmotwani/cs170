@@ -98,7 +98,7 @@ def misplacedTileHeuristic(puzzle):
     return count
 def queueing(x, queue, alg):
     arr = [1,2,3]
-    print("container ", x)
+    # print("container ", x)
     for i in range(len(x)):
     #     if alg == arr[i]: 
     #         x[i].heuristic = 0
@@ -166,7 +166,7 @@ def search(puzzle, alg):    # for i in range(len(x)):
     print("nodecheck ", queue)
     # heapq.heappush(queue, node)                             #using a heap priority queue to always know the first element
     # print("nodecheck 2", queue)
-
+    count = 0
     goalState = False
     while goalState == False:                               #while loop for false
         display(node)
@@ -176,9 +176,11 @@ def search(puzzle, alg):    # for i in range(len(x)):
         temp = heappop(queue)                                       #using a temp value to save the current state of the queue
         print('the best state to expand with a g(n) of ', node.depth, 'and a f(n) of ' , node.heuristic)   #printing the best solution
         print('expanding state')
+        for i in range(len(queue)): print("nodecheck inside",count,":", queue[i].state)
         x = expand(temp)                                     #passing in the current node 
         queueing(x, queue,alg)
-        
+        count += 1
+        if count == 50: break
 
 
 # queueing function
