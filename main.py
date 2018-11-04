@@ -12,7 +12,7 @@ class Node:
         self.cost = heuristic + depth            #h(n) + g(n) calculation of total moves altogether
     def __lt__(self, other):
         return self.heuristic < other.heuristic
-    
+    #stackoverflow page https://stackoverflow.com/questions/47912064/typeerror-not-supported-between-instances-of-heapnode-and-heapnode
     
     # def getState(self, state):
     #     return self.state                        #function to return the current state of the node
@@ -116,7 +116,7 @@ def queueing(x, queue, alg):
             print('mt h=', x[i].heuristic)
         if alg == '3':
             x[i].heuristic = manhattanDistanceHeuristic(x[i].state)
-            print('md h=', x[i].heuristic)
+        print('md h=', x[i].heuristic)
         # print(x[i])
         # print("before",queue)
         heapq.heappush(queue, x[i])
@@ -166,21 +166,21 @@ def search(puzzle, alg):    # for i in range(len(x)):
     print("nodecheck ", queue)
     # heapq.heappush(queue, node)                             #using a heap priority queue to always know the first element
     # print("nodecheck 2", queue)
-    count = 0
+    # count = 0
     goalState = False
     while goalState == False:                               #while loop for false
-        display(node)
+        display(queue[0])
         emptyCheck(node)
-        goalState = goalCheck(node, goalState)
+        goalState = goalCheck(queue[0], goalState)
         heapify(queue)
         temp = heappop(queue)                                       #using a temp value to save the current state of the queue
-        print('the best state to expand with a g(n) of ', node.depth, 'and a f(n) of ' , node.heuristic)   #printing the best solution
+        print('the best state to expand with a g(n) of ', temp.depth, 'and a f(n) of ' , temp.heuristic)   #printing the best solution
         print('expanding state')
-        for i in range(len(queue)): print("nodecheck inside",count,":", queue[i].state)
+        # for i in range(len(queue)): print("nodecheck inside",count,":", queue[i].state)
         x = expand(temp)                                     #passing in the current node 
-        queueing(x, queue,alg)
-        count += 1
-        if count == 50: break
+        queueing(x, queue, alg)
+        # count += 1
+        # if count == 6: break
 
 
 # queueing function
