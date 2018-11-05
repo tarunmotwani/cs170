@@ -145,7 +145,7 @@ def search(puzzle, alg):    # for i in range(len(x)):
     
     heap = []                                              #empty queue of nodes
     heapq.heappush(heap, node)                             #using a heap priority queue to always know the first element
-    heapq.heapify(heap)
+    heapq.heapify(heap)                                     #reference https://docs.python.org/2/library/heapq.html
     # print("nodecheck ", queue)
     # heapq.heappush(queue, node)                             #using a heap priority queue to always know the first element
     # print("nodecheck 2", queue)
